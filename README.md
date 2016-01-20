@@ -7,5 +7,5 @@
 [![docs](http://img.shields.io/badge/docs-read-blue.svg)](https://ce-onprem.readthedocs.org)
 [![circleci](https://circleci.com/gh/cloud-elements/example.com.svg?style=shield)](https://circleci.com/gh/cloud-elements/example.com)
 
-Cloud Elements example cloud. Serves solely as an example of the Hykes blueprint spec and plugin
-system.
+Cloud Elements example cloud blueprint. Serves solely as an example of the Hykes blueprint spec and
+plugin system.
