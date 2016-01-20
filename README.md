@@ -8,4 +8,4 @@
 [![circleci](https://circleci.com/gh/cloud-elements/example.com.svg?style=shield)](https://circleci.com/gh/cloud-elements/example.com)
 
 Cloud Elements example cloud blueprint. Serves solely as an example of the Hykes blueprint spec and
-plugin system.
+configuration system.
