@@ -1,0 +1,467 @@
+---
+
+### CLOUD PHASE ###############################################################
+cloud:
+  # Environment variables made available on all servers.
+  env:
+    - TEST_ENV='Hello World!'
+
+  # Lifecycle hook which runs before all tasks.
+  pre:
+    - /usr/local/bin/cloud-echo.sh pre
+    - /usr/local/bin/cloud-echo.sh "${TEST_ENV}"
+
+  # Lifecycle hook which runs after all tasks.
+  post:
+    - /usr/local/bin/cloud-echo.sh post
+    - /usr/local/bin/cloud-echo.sh "${TEST_ENV}"
+
+### APP PHASE #################################################################
+app:
+  # Environment variables made available on servers with role.
+  env:
+
+  # Lifecycle hook which runs before app tasks.
+  pre:
+    - /usr/local/bin/cloud-echo.sh pre
+    - /usr/local/bin/app-echo.sh pre
+
+  # Lifecycle hook which runs after app tasks.
+  post:
+    - /usr/local/bin/cloud-echo.sh post
+    - /usr/local/bin/app-echo.sh post
+
+### CACHE PHASE ###############################################################
+cache:
+  # Environment variables made available on servers with role.
+  env:
+
+  # Lifecycle hook which runs before cache tasks.
+  pre:
+    - /usr/local/bin/cloud-echo.sh pre
+    - /usr/local/bin/cache-echo.sh pre
+
+  # Lifecycle hook which runs after cache tasks.
+  post:
+    - /usr/local/bin/cloud-echo.sh post
+    - /usr/local/bin/cache-echo.sh post
+
+### DATABASE PHASE ############################################################
+database:
+  # Environment variables made available on servers with role.
+  env:
+
+  # Lifecycle hook which runs before database tasks.
+  pre:
+    - /usr/local/bin/cloud-echo.sh pre
+    - /usr/local/bin/database-echo.sh pre
+
+  # Lifecycle hook which runs after database tasks.
+  post:
+    - /usr/local/bin/cloud-echo.sh post
+    - /usr/local/bin/database-echo.sh post
+
+### EIB PHASE #################################################################
+eib:
+  # Environment variables made available on servers with role.
+  env:
+
+  # Lifecycle hook which runs before eib tasks.
+  pre:
+    - /usr/local/bin/cloud-echo.sh pre
+    - /usr/local/bin/eib-echo.sh pre
+
+  # Lifecycle hook which runs after eib tasks.
+  post:
+    - /usr/local/bin/cloud-echo.sh post
+    - /usr/local/bin/eib-echo.sh post
+
+### LOADBALANCE PHASE #########################################################
+loadbalance:
+  # Environment variables made available on servers with role.
+  env:
+
+  # Lifecycle hook which runs before loadbalance tasks.
+  pre:
+    - /usr/local/bin/cloud-echo.sh pre
+    - /usr/local/bin/loadbalance-echo.sh pre
+
+  # Lifecycle hook which runs after loadbalance tasks.
+  post:
+    - /usr/local/bin/cloud-echo.sh post
+    - /usr/local/bin/loadbalance-echo.sh post
+
+### LOGPIPE PHASE #############################################################
+logpipe:
+  # Environment variables made available on servers with role.
+  env:
+
+  # Lifecycle hook which runs before logpipe tasks.
+  pre:
+    - /usr/local/bin/cloud-echo.sh pre
+    - /usr/local/bin/logpipe-echo.sh pre
+
+  # Lifecycle hook which runs before logpipe tasks.
+  post:
+    - /usr/local/bin/cloud-echo.sh post
+    - /usr/local/bin/logpipe-echo.sh post
+
+### LOGSEARCH PHASE ###########################################################
+logsearch:
+  # Environment variables made available on servers with role.
+  env:
+
+  # Lifecycle hook which runs before logsearch tasks.
+  pre:
+    - /usr/local/bin/cloud-echo.sh pre
+    - /usr/local/bin/logsearch-echo.sh pre
+
+  # Lifecycle hook which runs after logsearch tasks.
+  post:
+    - /usr/local/bin/cloud-echo.sh post
+    - /usr/local/bin/logsearch-echo.sh post
+
+### HYKES #####################################################################
+hykes_vars:
+  base_fqdn: example.com
+  elasticsearch_version: 1.7.3
+  kafka_version: 0.8.2.1
+  logstash_version: 1.5.4
+  maven_version: 3.3.3
+  memcached_version: 1.4.24
+  nginx_version: 1.8.0
+  postgresql_version: 9.3.9
+  postgresql_backup_encryption_password: backup
+  postgresql_cesecurity_password: cesecurity
+  postgresql_elements_password: elements
+  postgresql_master_encryption_password: master
+  redis_version: 3.0.4
+  repmgr_version: 3.0.2
+  tomcat_version: 7.0.64
+
+hykes_files:
+  etc_opt_tomcat_elements_elements_keys: |
+
+  etc_opt_tomcat_elements_elements_properties: |
+    ########################################################################
+    #                                                          Core Elements
+
+    app.server.name = {{ ansible_hostname }}
+    log.root = /var/opt/tomcat/log/elements
+    base.url = https://console.{{ hykes_vars.base_fqdn }}
+    v2.url = /elements/api-v2
+    external.url = /elements/api-v2/external
+    aaa.log.encryption.key =
+    enforce.http.method.types = true
+    environment.production = false
+    proxy.urlformat = https://<random>-<applicationName>.ceproxy.li/snapshot
+    allowed.origins = https://api.{{ hykes_vars.base_fqdn }}, https://console.{{ hykes_vars.base_fqdn }}
+    ########################################################################
+    #                                                          Elements REST
+
+    elements.restful.accesscontrol = false
+    elements.accesscontrol.token =
+    elements.monitoring.enabled = true
+    ########################################################################
+    #                                                           Registration
+
+    registration.hubspot.event.endpoint = https://track.hubspot.com/v1/event
+    registration.hubspot.event.id =
+    registration.hubspot.portal.id =
+    registration.hubspot.enabled = false
+
+    ########################################################################
+    #                                                           Intelligence
+
+    intelligence.user.secret =
+    intelligence.org.secret =
+
+    ########################################################################
+    #                                                               Database
+
+    jdbc.driverClassName = org.postgresql.Driver
+    jdbc.url = jdbc:postgresql://{{ hostvars[groups.database[0]].ansible_eth0.ipv4.address }}:5432/elements
+    jdbc.username = elements
+    jdbc.password = {{ postgresql.elements_password }}
+    {% if groups.database | length > 1 %}
+    jdbc.secondary.url = jdbc:postgresql://{{ hostvars[groups.database[1]].ansible_eth0.ipv4.address }}:5432/elements
+    jdbc.secondary.username = elements
+    jdbc.secondary.password = {{ postgresql.elements_password }}
+    {% else %}
+    jdbc.secondary.url =
+    jdbc.secondary.username =
+    jdbc.secondary.password =
+    {% endif %}
+    jdbc.pool.initial.size = 10
+    jdbc.pool.max.size = 52
+    jdbc.pool.max.idle.size = 2
+    jdbc.pool.connection.evictionIdleTime = 1800000
+    jdbc.pool.connection.evictionInterval = 1800000
+    jdbc.pool.connection.removeAbandoned = true
+    jdbc.pool.connection.removeAbandonedTimeout = 300
+    jdbc.pool.connection.validate = true
+    ########################################################################
+    #                                                               Security
+
+    security.jdbc.url = jdbc:postgresql://{{ hostvars[groups.database[0]].ansible_eth0.ipv4.address }}:5432/cesecurity
+    security.jdbc.username = cesecurity
+    security.jdbc.encryptedPassword = Aw3IeIVFJ1Y+HSerDxtLxJbIvcWaEzHIFCGGc62SiK84
+    {% if groups.database | length > 1 %}
+    security.jdbc.secondary.url = jdbc:postgresql://{{ hostvars[groups.database[1]].ansible_eth0.ipv4.address }}:5432/cesecurity
+    security.jdbc.secondary.username = cesecurity
+    security.jdbc.secondary.encryptedPassword = Aw3IeIVFJ1Y+HSerDxtLxJbIvcWaEzHIFCGGc62SiK84
+    {% else %}
+    security.jdbc.secondary.url =
+    security.jdbc.secondary.username =
+    security.jdbc.secondary.encryptedPassword =
+    {% endif %}
+    security.jdbc.pool.initial.size = 5
+    security.jdbc.pool.max.size = 10
+    security.jdbc.pool.max.idle.size = 1
+    security.jdbc.pool.connection.validate = true
+    security.jdbc.pool.connection.removeAbandoned = true
+    security.jdbc.pool.connection.removeAbandonedTimeout = 300
+    security.jdbc.pool.connection.evictionInterval = 1800000
+    security.jdbc.pool.connection.evictionIdleTime = 1800000
+    ########################################################################
+    #                                                                Logging
+
+    elasticsearch.host = {{ hostvars[groups.loadbalance[0]].ansible_eth0.ipv4.address }}
+    elasticsearch.port = 81
+    redis.logging.enabled = true
+    redis.logging.key = logstash
+    redis.logging.batch_size = 1
+    redis.logging.hostname = {{ hostvars[groups.cache[0]].ansible_eth0.ipv4.address }}
+    redis.logging.port = 6379
+    ########################################################################
+    #                                                                   Xero
+
+    xero.oauth.api.callback =
+    xero.oauth.api.key =
+    xero.oauth.api.secret =
+    xero.partner.keystore =
+    xero.partner.keystore.password =
+    xero.partner.private.pfx =
+    xero.partner.private.password =
+    ########################################################################
+    #                                                                  Redis
+
+    redis.instance.count = {{ groups.cache | length }}
+    redis.poolsize = 128
+    {% for c in groups.cache %}
+    redis.hostname.{{ loop.index0 }} = {{ hostvars[c].ansible_eth0.ipv4.address }}
+    redis.port.{{ loop.index0 }} = 6379
+    {% endfor %}
+    ########################################################################
+    #                                                    Pivotal Integration
+
+    ########################################################################
+    #                                                      Interaction (EIB)
+
+    orchestrator.enabled = true
+    orchestrator.mode = kafka
+    orchestrator.kafka.zookeeper = {{ hostvars[groups.eib[0]].ansible_eth0.ipv4.address }}:2181
+    orchestrator.kafka.groupId = elementsOrchestrationGroup
+    orchestrator.kafka.brokers = {% for e in groups.eib %}{{ hostvars[e].ansible_eth0.ipv4.address }}:9092{% if not loop.last %},{% endif %}{% endfor %}
+
+    ########################################################################
+    #                                                               Mongo DB
+
+    mongo.database = false
+    mongo.hostname = localhost
+    mongo.port = 27020
+    mongo.databaseName = elements
+    mongo.username = elements
+    mongo.password = elements
+    mongo.defaultCollectionName = element_logs
+    ########################################################################
+    #                                                          Alert Element
+
+    alert.process.interval = 30000
+    alert.messaging.enabled = true
+    ########################################################################
+    #                                                       Sendgrid Element
+
+    messaging.smtp.sendgrid.reseller.apiuser = reseller@cloud-elements.com
+    messaging.smtp.sendgrid.reseller.apikey =
+    messaging.smtp.sendgrid.reseller.apiurl = https://reseller-4.sendgrid.net
+    messaging.smtp.sendgrid.apiurl = https://sendgrid.com
+    messaging.smtp.sendgrid.return.reply.domain = sendgrid.cloud-elements.net
+    messaging.smtp.sendgrid.activateappurl = /api/filter.activate.json
+    messaging.smtp.sendgrid.updateparseurl = /api/parse.set.json
+    messaging.smtp.sendgrid.updatesettingsurl = /api/filter.setup.json
+    messaging.smtp.sendgrid.reseller.activateappurl = /apiv2/reseller.manage.json
+    messaging.smtp.sendgrid.reseller.addcustomerurl = /apiv2/reseller.add.json
+    messaging.smtp.sendgrid.reseller.managecustomer = /apiv2/reseller.manage.json
+    messaging.smtp.sendgrid.reseller.updateparseurl = /apiv2/reseller.manageSubuser.json
+    messaging.smtp.sendgrid.reseller.updatesettingsurl = /apiv2/reseller.manage.json
+    ########################################################################
+    #                                                         Twilio Element
+
+    twilio.app.key =
+    twilio.account.token =
+    twilio.usage.api.template = https://ACCOUNT:SECRET@api.twilio.com/2010-04-01/Acounts/ACCOUNT/Usage/Records/SUBURI.json
+    ########################################################################
+    #                                                File Management Element
+
+    upload.directory = /var/opt/tomcat/upload/elements
+    download.directory = /var/opt/tomcat/download/elements
+    bulk.upload.directory = /var/opt/tomcat/bulkupload/elements
+    bulk.download.directory = /var/opt/tomcat/bulkdownload/elements
+    ########################################################################
+    #                                                        Instagram OAuth
+
+    instagram.oauth.api.clientId =
+    instagram.oauth.api.secret =
+    instagram.oauth.api.callback = https://console.{{ hykes_vars.base_fqdn }}/elements/api-v1/instagram/receive
+    ########################################################################
+    #                                                          Dropbox OAuth
+
+    dropboxfile.oauth.api.key =
+    dropboxfile.oauth.api.secret =
+    dropboxfile.oauth.api.callback = https://console.{{ hykes_vars.base_fqdn }}/elements/jsp/home.jsp
+    ########################################################################
+    #                                                              Box OAuth
+
+    box.oauth.api.key =
+    box.oauth.api.secret =
+    box.oauth.api.callback = https://console.{{ hykes_vars.base_fqdn }}/elements/jsp/home.jsp
+    ########################################################################
+    #                                                   Notification Service
+
+    notification.process.interval = 60000
+    notification.enabled = true
+    notification.email =
+    ########################################################################
+    #                                                            Photobucket
+
+    photobucket.oauth.api.clientId =
+    photobucket.oauth.api.secret =
+    photobucket.url = https://api.photobucket.com
+    ########################################################################
+    #                                                           Google Drive
+
+    googledrive.oauth.api.key =
+    googledrive.oauth.api.secret =
+    googledrive.oauth.api.callback = https://console.{{ hykes_vars.base_fqdn }}/elements/jsp/home.jsp
+    ########################################################################
+    #                                                               SugarCRM
+
+    sugar.crm.api.endpoint = /service/v4_1/rest.php
+    ########################################################################
+    #                                                        SFDC Properties
+
+    sfdc.oauth.api.key =
+    sfdc.oauth.api.secret =
+    sfdc.site.address = https://login.salesforce.com
+    sfdc.oauth.scope = full refresh_token
+    sfdc.oauth.api.callback = https://console.{{ hykes_vars.base_fqdn }}/elements/jsp/home.jsp
+    sfdc.oauth.token.url = https://login.salesforce.com/services/oauth2/token
+    sfdc.oauth.revoke.url = https://login.salesforce.com/services/oauth2/revoke
+    ########################################################################
+    #                                                               Autotask
+
+    autotask.psa.api.endpoint.east = https://webservices3.autotask.net/atservices/1.5/atws.wsdl
+    autotask.psa.api.endpoint.west = https://webservices5.autotask.net/atservices/1.5/atws.wsdl
+    autotask.psa.api.endpoint.prerelease = https://webservices2.autotask.net/atservices/1.5/atws.wsdl
+    ########################################################################
+    #                                                                   Gnip
+
+    gnip.streaming.enabled = false
+    gnip.polling.enabled = true
+    gnip.processing.enabled = true
+    ########################################################################
+    #                                                             Sharepoint
+
+    sharepoint.oauth.api.key =
+    sharepoint.oauth.api.secret =
+    sharepoint.oauth.api.callback = https://console.{{ hykes_vars.base_fqdn }}/elements/jsp/home.jsp
+    sharepoint.oauth.scope = Web.Read Web.Write Web.Manage Site.Read Site.Write Site.Manage List.Read List.Write List.Manage AllSites.Read AllSites.Write AllSites.Manage
+    sharepoint.app.domain = NotRequired
+    microsoft.app.sharepoint.id =
+    ########################################################################
+    #                                                            Connectwise
+
+    connectwise.psa.page.size = 2000
+    ########################################################################
+    #                                                             Quickbooks
+
+    quickbooks.oauth.api.appToken =
+    quickbooks.oauth.api.callback = https://console.{{ hykes_vars.base_fqdn }}
+    quickbooks.oauth.api.key =
+    quickbooks.oauth.api.secret =
+    ########################################################################
+    #                                                               SkyDrive
+
+    skydrive.oauth.api.key =
+    skydrive.oauth.api.secret =
+    skydrive.oauth.api.callback = https://console.{{ hykes_vars.base_fqdn }}/elements/jsp/home.jsp
+    skydrive.oauth.scope = wl.offline_access wl.skydrive_update
+    skydrive.authorization.host = login.live.com
+    skydrive.api.host = apis.live.net
+    skydrive.api.version = v5.0
+    ########################################################################
+    #                                                                 Eloqua
+
+    eloqua.api.base.url = https://secure.p03.eloqua.com/API/REST/1.0
+    eloqua.api.endpoint.determination.url = https://login.eloqua.com/id
+    ########################################################################
+    #                                                                InfoBip
+
+    infobip.action.url = https://oneapi.infobip.com/1/smsmessaging/inbound/setup/resource/{resourceId}/action
+    infobip.resource.url = https://oneapi.infobip.com/1/smsmessaging/inbound/setup/resource
+    infobip.event.callback.url = /elements/api-v2/hubs/messaging/receive_infobip
+    ########################################################################
+    #                                                                HubSpot
+
+    hubspot.oauth.api.key =
+    hubspot.oauth.api.callback = https://console.{{ hykes_vars.base_fqdn }}/elements/jsp/home.jsp
+    hubspot.oauth.scope = offline
+    ########################################################################
+    #                                                                  ActOn
+
+    acton.oauth.api.key =
+    acton.oauth.api.secret =
+    acton.oauth.api.callback = https://console.{{ hykes_vars.base_fqdn }}/elements/jsp/home.jsp
+    ########################################################################
+    #                                                              MailChimp
+
+    mailchimp.oauth.api.key =
+    mailchimp.oauth.api.secret =
+    mailchimp.oauth.api.callback = https://console.{{ hykes_vars.base_fqdn }}/elements/jsp/home.jsp
+    mailchimp.oauth.baseUrl = https://login.mailchimp.com/oauth2
+    ########################################################################
+    #                                                                Shopify
+
+    shopify.oauth.api.key =
+    shopify.oauth.api.secret =
+    shopify.oauth.api.callback = http://console.{{ hykes_vars.base_fqdn }}/elements/jsp/home.jsp
+    shopify.oauth.scope = write_orders,write_products,write_customers
+    ########################################################################
+    #                                                               Evernote
+
+    evernote.oauth.api.key =
+    evernote.oauth.api.secret =
+    evernote.oauth.api.callback = https://console.{{ hykes_vars.base_fqdn }}/elements/jsp/home.jsp
+    evernote.base.url = https://www.evernote.com
+    evernote.base.sandbox.url = https://sandbox.evernote.com
+    evernote.file.link.template = shard/{shardId}/nl/{userId}/{noteId}
+
+    ########################################################################
+    #                                                              Scripting
+    scripting.enabled = true
+    scripting.mime.types = application/javascript
+    scripting.max.threads = 5
+    scripting.execution.timeout = 30
+
+  etc_ssl_certs_elements_api_pem: |
+
+  etc_ssl_certs_elements_base_pem: |
+
+  etc_ssl_certs_elements_console_pem: |
+
+  etc_ssl_private_elements_api_key: |
+
+  etc_ssl_private_elements_base_key: |
+
+  etc_ssl_private_elements_console_key: |
