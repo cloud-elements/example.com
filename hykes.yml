@@ -5,6 +5,7 @@ cloud:
   # Environment variables made available on all servers.
   env:
     - BASE_FQDN='example.com'
+    - CECORE_VERSION='2.51.7'
     - ELASTICSEARCH_VERSION='1.7.3'
     - KAFKA_VERSION='0.8.2.1'
     - LOGSTASH_VERSION='1.5.4'
