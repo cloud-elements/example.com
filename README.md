@@ -8,4 +8,4 @@
 [![forum](http://img.shields.io/badge/forum-join-blue.svg)](http://forum.cloud-elements.com)
 [![circleci](https://circleci.com/gh/cloud-elements/hykes-spec.svg?style=shield)](https://circleci.com/gh/cloud-elements/hykes-spec)
 
-Cloud Elements cloud blueprint spec and Hykes norms.
+Cloud Elements cloud blueprint spec and norms.
