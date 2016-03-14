@@ -1,129 +1,64 @@
 ---
 
-### CLOUD PHASE ###############################################################
-cloud:
-  # Environment variables made available on all servers.
-  env:
-    - BASE_FQDN='example.com'
-    - CECORE_VERSION='2.51.7'
-    - ELASTICSEARCH_VERSION='1.7.3'
-    - KAFKA_VERSION='0.8.2.1'
-    - LOGSTASH_VERSION='1.5.4'
-    - MAVEN_VERSION='3.3.3'
-    - MEMCACHED_VERSION='1.4.24'
-    - NGINX_VERSION='1.8.0'
-    - POSTGRESQL_VERSION='9.3.9'
-    - REDIS_VERSION='3.0.4'
-    - REPMGR_VERSION='3.0.2'
-    - TOMCAT_VERSION='7.0.64'
-
-  # Secret variables only made available during build tasks.
-  secret:
-    - POSTGRESQL_BACKUP_ENCRYPTION_PASSWORD='backup'
-    - POSTGRESQL_CESECURITY_PASSWORD='cesecurity'
-    - POSTGRESQL_ELEMENTS_PASSWORD='elements'
-    - POSTGRESQL_MASTER_ENCRYPTION_PASSWORD='master'
-
-  # Lifecycle hook which runs before all tasks.
-  pre:
-
-  # Lifecycle hook which runs after all tasks.
-  post:
-
-### APP PHASE #################################################################
+### APP ROLE PHASE ################################################################################
 app:
-  # Environment variables made available on servers with role.
   env:
+    elements_version: 2.55.5
+    tomcat_version: 7.0.64
 
-  # Secret variables only made available during build tasks.
-  secret:
+  shell:
+    - chown tomcat:tomcat /etc/opt/tomcat/elements/elements.keys
+    - chown tomcat:tomcat /etc/opt/tomcat/elements/elements.properties
+    - chmod 640 /etc/opt/tomcat/elements/elements.keys
+    - chmod 640 /etc/opt/tomcat/elements/elements.properties
 
-  # Lifecycle hook which runs before app build tasks.
-  pre:
-
-  # Lifecycle hook which runs after app build tasks.
-  post:
-
-### CACHE PHASE ###############################################################
+### CACHE ROLE PHASE ##############################################################################
 cache:
-  # Environment variables made available on servers with role.
   env:
+    memcached_version: 1.4.24
+    redis_version: 3.0.4
 
-  # Secret variables only made available during build tasks.
-  secret:
+  shell:
 
-  # Lifecycle hook which runs before cache build tasks.
-  pre:
-
-  # Lifecycle hook which runs after cache build tasks.
-  post:
-
-### DATABASE PHASE ############################################################
+### DATABASE ROLE PHASE ###########################################################################
 database:
-  # Environment variables made available on servers with role.
   env:
+    postgresql_version: 9.3.9
+    repmgr_version: 3.0.2
 
-  # Secret variables only made available during build tasks.
-  secret:
+  shell:
 
-  # Lifecycle hook which runs before database build tasks.
-  pre:
-
-  # Lifecycle hook which runs after database build tasks.
-  post:
-
-### EIB PHASE #################################################################
-eib:
-  # Environment variables made available on servers with role.
-  env:
-
-  # Secret variables only made available during build tasks.
-  secret:
-
-  # Lifecycle hook which runs before eib build tasks.
-  pre:
-
-  # Lifecycle hook which runs after eib build tasks.
-  post:
-
-### LOADBALANCE PHASE #########################################################
+### LOADBALANCE ROLE PHASE ########################################################################
 loadbalance:
-  # Environment variables made available on servers with role.
   env:
+    base_fqdn: dev.ops.cloud-elements.com
+    nginx_version: 1.8.0
 
-  # Secret variables only made available during build tasks.
-  secret:
+  shell:
+    - chmod 640 /etc/opt/nginx/tls/elements.api.key
+    - chmod 640 /etc/opt/nginx/tls/elements.api.pem
+    - chmod 640 /etc/opt/nginx/tls/elements.base.key
+    - chmod 640 /etc/opt/nginx/tls/elements.base.pem
+    - chmod 640 /etc/opt/nginx/tls/elements.console.key
+    - chmod 640 /etc/opt/nginx/tls/elements.console.pem
 
-  # Lifecycle hook which runs before loadbalance build tasks.
-  pre:
-
-  # Lifecycle hook which runs after loadbalance build tasks.
-  post:
-
-### LOGPIPE PHASE #############################################################
+### LOGPIPE ROLE PHASE ############################################################################
 logpipe:
-  # Environment variables made available on servers with role.
   env:
+    logstash_version: 1.5.4
 
-  # Secret variables only made available during build tasks.
-  secret:
+  shell:
 
-  # Lifecycle hook which runs before logpipe build tasks.
-  pre:
-
-  # Lifecycle hook which runs before logpipe build tasks.
-  post:
-
-### LOGSEARCH PHASE ###########################################################
-logsearch:
-  # Environment variables made available on servers with role.
+### LOGSTORE ROLE PHASE ###########################################################################
+logstore:
   env:
+    elasticsearch_version: 1.7.3
 
-  # Secret variables only made available during build tasks.
-  secret:
+  shell:
 
-  # Lifecycle hook which runs before logsearch build tasks.
-  pre:
+### MESSAGE ROLE PHASE ############################################################################
+message:
+  env:
+    kafka_version: 0.8.2.1
 
-  # Lifecycle hook which runs after logsearch build tasks.
-  post:
+  shell:
