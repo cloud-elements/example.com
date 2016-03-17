@@ -31,7 +31,7 @@ database:
 ### LOADBALANCE ROLE PHASE ########################################################################
 loadbalance:
   env:
-    base_fqdn: dev.ops.cloud-elements.com
+    base_fqdn: example.com
     nginx_version: 1.8.0
 
   shell:

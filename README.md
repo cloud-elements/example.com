@@ -7,3 +7,19 @@
 [![docs](http://img.shields.io/badge/docs-read-blue.svg)](https://developers.cloud-elements.com)
 [![forum](http://img.shields.io/badge/forum-join-blue.svg)](https://forum.cloud-elements.com)
 [![circleci](https://circleci.com/gh/cloud-elements/hykes-spec.svg?style=shield)](https://circleci.com/gh/cloud-elements/hykes-spec)
+
+Cloud Elements Enterprise blueprint spec. Additionally serves as an example blueprint which can be
+provisioned against, keyed, built, etc.
+
+## URLs <sub><sup>(locally via `/etc/hosts`)</sub></sup>
+
+* __API:__ https://api.example.com
+* __Base:__ https://example.com
+* __Console:__ https://console.example.com
+
+## Initialization Values <sub><sup>(via `hykes-engine build --init`)</sup></sub>
+
+* __Elements Password:__ `elements`
+* __CE Security Password:__ `cesecurity`
+* __Master Encryption Password:__ `master`
+* __Backup Encryption Password:__ `backup`
